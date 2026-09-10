@@ -1,0 +1,12 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+    volumes:
+      - imdb-data:/app/data
+
+volumes:
+  imdb-data:
