@@ -29,14 +29,14 @@ curl -X POST http://127.0.0.1:8000/ask \
 cp .env.docker.example .env
 # Add your API keys to .env
 
-docker build -t assine .
-docker run -p 8000:8000 --env-file .env assine
+docker build -t cinema .
+docker run -p 8000:8000 --env-file .env cinema
 ```
 
 The first run builds the IMDb SQLite index inside the container (`data/imdb.db`). To keep the index between runs, mount a volume:
 
 ```bash
-docker run -p 8000:8000 --env-file .env -v assine-data:/app/data assine
+docker run -p 8000:8000 --env-file .env -v cinema-data:/app/data cinema
 ```
 
 Open `http://127.0.0.1:8000/docs` for interactive API docs.

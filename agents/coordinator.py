@@ -121,6 +121,13 @@ class Coordinator:
             timeout=self.timeout,
         )
 
+    @staticmethod
+    def _visible_text(parts: list[types.Part]) -> str:
+        """Return only user-facing text, excluding GPT-OSS/ADK thought parts."""
+        return "".join(
+            part.text or "" for part in parts if not getattr(part, "thought", False)
+        ).strip()
+
     async def ask(self, question: str) -> AskResponse:
         evidence: list[str] = []
         citations: list[Source] = []
@@ -143,7 +150,7 @@ class Coordinator:
                 ),
             ):
                 if event.is_final_response() and event.content:
-                    answer = "".join(part.text or "" for part in event.content.parts).strip()
+                    answer = self._visible_text(event.content.parts)
         except AppError:
             raise
         except Exception as exc:

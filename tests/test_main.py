@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from agents.base import AskResponse, Source, SourceKind
 from agents.coordinator import CerebrasLiteLLMClient, Coordinator
 from agents.imdb import IMDbAgent
+from google.genai import types
 from main import create_app
 
 
@@ -44,6 +45,15 @@ def test_cerebras_client_removes_replayed_reasoning_content():
 
     assert "reasoning_content" not in sanitized[1]
     assert "reasoning_content" in messages[1]
+
+
+def test_visible_text_excludes_adk_thought_parts():
+    parts = [
+        types.Part(text="Internal reasoning.", thought=True),
+        types.Part(text="Batman is a DC superhero."),
+    ]
+
+    assert Coordinator._visible_text(parts) == "Batman is a DC superhero."
 
 
 def test_imdb_agent_searches_a_prepared_sqlite_index(tmp_path):
