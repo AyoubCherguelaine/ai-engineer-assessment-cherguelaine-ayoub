@@ -1,4 +1,4 @@
-# AI Engineer Assessment Chatbot
+# AI Engineer cinema Chatbot
 
 A small FastAPI chatbot with one endpoint, `POST /ask`. It answers film questions from IMDb's official non-commercial datasets, superhero questions via [Superhero API](https://superheroapi.com/), or combines both. Google ADK runs the tool-using agent and its LiteLLM adapter calls Cerebras `gpt-oss-120b` by default. Every response includes its sources.
 

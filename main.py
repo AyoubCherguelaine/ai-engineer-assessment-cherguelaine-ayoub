@@ -49,7 +49,7 @@ def create_app(coordinator: Coordinator | None = None) -> FastAPI:
         yield
 
     app = FastAPI(
-        title="Assessment Chatbot API",
+        title="Cinema Chatbot API",
         version="1.0.0",
         lifespan=lifespan,
         description="Google ADK + LiteLLM answers grounded in IMDb data and/or Superhero API data.",

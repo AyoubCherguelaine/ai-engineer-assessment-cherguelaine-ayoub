@@ -138,9 +138,9 @@ class Coordinator:
 
         try:
             await sessions.create_session(
-                app_name="assessment_chatbot", user_id="api", session_id=session_id
+                app_name="cinema_chatbot", user_id="api", session_id=session_id
             )
-            runner = Runner(agent=agent, app_name="assessment_chatbot", session_service=sessions)
+            runner = Runner(agent=agent, app_name="cinema_chatbot", session_service=sessions)
             answer = ""
             async for event in runner.run_async(
                 user_id="api",
@@ -150,7 +150,7 @@ class Coordinator:
                 ),
             ):
                 if event.is_final_response() and event.content:
-                    answer = self._visible_text(event.content.parts)
+                    answer = self._visible_text(event.content.parts) # type: ignore
         except AppError:
             raise
         except Exception as exc:
