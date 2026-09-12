@@ -6,3 +6,4 @@ data/*.db
 data/imdb_raw/
 docs/
 docs_ar/
+.github

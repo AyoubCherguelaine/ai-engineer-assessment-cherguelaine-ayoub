@@ -1,7 +1,7 @@
-fastapi>=0.115,<1.0
-uvicorn[standard]>=0.30,<1.0
-httpx>=0.27,<1.0
-python-dotenv>=1.0,<2.0
-pytest>=8.0,<9.0
-google-adk>=2.0
-litellm>=1.84
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+httpx==0.28.1
+python-dotenv==1.2.3
+pytest==8.4.2
+google-adk==2.8.0
+litellm==1.100.1

@@ -1,0 +1,21 @@
+# Never send credentials, local environments, or generated data to Docker.
+.env
+.env.*
+!.env.example
+!.env.docker.example
+
+.git
+.github
+venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+
+# IMDb data is created in the named runtime volume, not baked into images.
+data/
+
+# These are not needed to run the service image.
+tests/
+docs/
+docs_ar/
+test-questions.md

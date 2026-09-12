@@ -1,6 +1,6 @@
 # AI Engineer cinema Chatbot
 
-A small FastAPI chatbot with one endpoint, `POST /ask`. It answers film questions from IMDb's official non-commercial datasets, superhero questions via [Superhero API](https://superheroapi.com/), or combines both. Google ADK runs the tool-using agent and its LiteLLM adapter calls Cerebras `gpt-oss-120b` by default. Every response includes its sources.
+A small FastAPI chatbot with one endpoint, `POST /ask`. It answers film questions from IMDb's official non-commercial datasets, superhero questions via [Superhero API](https://superheroapi.com/), or combines both. Google ADK runs the tool-using agent; its LiteLLM adapter calls Cerebras `gpt-oss-120b` by default. Every response includes its sources.
 
 The API stays in `main.py`; the Google ADK coordinator exposes exactly two function tools: `search_imdb(query)` and `search_superhero(name)`. The small `agents/` folder contains those tools and shared contracts. Set `CEREBRAS_API_KEY`; the default model is `cerebras/gpt-oss-120b`. Optionally change `LITELLM_MODEL` to any LiteLLM-supported model identifier.
 
