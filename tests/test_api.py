@@ -1,13 +1,17 @@
 """API behavior tests without a live ADK model call."""
 
+import json
+import sqlite3
+
 from fastapi.testclient import TestClient
 
 from agents.base import AppError, AskResponse, Source, SourceKind
+from agents.chat_history import ChatHistoryStore
 from main import create_app
 
 
 class ScenarioCoordinator:
-    async def ask(self, question):
+    async def ask(self, question, session_id=None):
         if question == "trigger failure":
             raise AppError("The Superhero API is temporarily unavailable.", 502)
         return AskResponse(
@@ -37,6 +41,8 @@ def test_api_returns_the_answer_and_sources_from_the_coordinator():
         "imdb",
         "superhero_api",
     }
+    assert response.json()["session_id"]
+    assert response.json()["model_used"] == "unknown"
 
 
 def test_api_rejects_invalid_payloads_without_calling_the_coordinator():
@@ -52,3 +58,43 @@ def test_expected_upstream_failure_is_exposed():
 
     assert response.status_code == 502
     assert response.json()["detail"] == "The Superhero API is temporarily unavailable."
+
+
+def test_chat_history_uses_a_separate_sqlite_database(tmp_path):
+    database = tmp_path / "chat_history.db"
+    response = AskResponse(
+        answer="Batman is a DC superhero.",
+        sources=[
+            Source(
+                kind=SourceKind.SUPERHERO_API,
+                label="Superhero API",
+                detail="Search result: Batman",
+            )
+        ],
+        session_id="session-123",
+        model_used="cerebras/gpt-oss-120b",
+    )
+
+    ChatHistoryStore(database).save(
+        "Who is Batman?", response, response.model_used or "unknown"
+    )
+
+    with sqlite3.connect(database) as connection:
+        row = connection.execute(
+            "SELECT session_id, question, answer, model_used, source_used, source_details "
+            "FROM chat_messages"
+        ).fetchone()
+    assert row[:4] == (
+        "session-123",
+        "Who is Batman?",
+        "Batman is a DC superhero.",
+        "cerebras/gpt-oss-120b",
+    )
+    assert json.loads(row[4]) == ["superhero_api"]
+    assert json.loads(row[5]) == [
+        {
+            "kind": "superhero_api",
+            "label": "Superhero API",
+            "detail": "Search result: Batman",
+        }
+    ]

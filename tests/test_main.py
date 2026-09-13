@@ -10,7 +10,7 @@ from main import create_app
 
 
 class StubCoordinator:
-    async def ask(self, question):
+    async def ask(self, question, session_id=None):
         return AskResponse(
             answer="Inception was directed by Christopher Nolan.",
             sources=[

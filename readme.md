@@ -4,6 +4,12 @@ A small FastAPI chatbot with one endpoint, `POST /ask`. It answers film question
 
 The API stays in `main.py`; the Google ADK coordinator exposes exactly two function tools: `search_imdb(query)` and `search_superhero(name)`. The small `agents/` folder contains those tools and shared contracts. Set `CEREBRAS_API_KEY`; the default model is `cerebras/gpt-oss-120b`. Optionally change `LITELLM_MODEL` to any LiteLLM-supported model identifier.
 
+Every successful request is also saved to `data/chat_history.db` (not the IMDb
+database). Each row contains the session ID, question, answer, model used,
+source kinds, and a JSON list of source details. Set `CHAT_HISTORY_DB` to use a
+different SQLite path. Send `session_id` in later requests if the client wants
+to group them; otherwise the API generates one and returns it.
+
 ## Run
 
 ```bash
@@ -20,7 +26,7 @@ Open `http://127.0.0.1:8000/docs` for interactive API docs.
 ```bash
 curl -X POST http://127.0.0.1:8000/ask \
   -H 'content-type: application/json' \
-  -d '{"question":"Who directed Inception?"}'
+  -d '{"question":"Who directed Inception?","session_id":"demo-session"}'
 ```
 
 ## Docker

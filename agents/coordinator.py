@@ -128,13 +128,13 @@ class Coordinator:
             part.text or "" for part in parts if not getattr(part, "thought", False)
         ).strip()
 
-    async def ask(self, question: str) -> AskResponse:
+    async def ask(self, question: str, session_id: str | None = None) -> AskResponse:
         evidence: list[str] = []
         citations: list[Source] = []
         errors: list[AppError] = []
         agent = self._build_agent(evidence, citations, errors)
         sessions = InMemorySessionService()
-        session_id = str(uuid4())
+        session_id = session_id or str(uuid4())
 
         try:
             await sessions.create_session(
@@ -165,7 +165,14 @@ class Coordinator:
             return AskResponse(
                 answer="I could not find source data needed to answer that question.",
                 sources=[],
+                session_id=session_id,
+                model_used=self.model,
             )
         if not answer:
             raise AppError("The language model returned no answer.")
-        return AskResponse(answer=answer, sources=citations)
+        return AskResponse(
+            answer=answer,
+            sources=citations,
+            session_id=session_id,
+            model_used=self.model,
+        )
